@@ -1,6 +1,6 @@
 # Tautulli Custom Newsletter Template
 
-This repository contains a custom HTML template for a "Recently Added" newsletter in Tautulli. This template provides a clean, customizable way to notify users of newly added content on your Plex Media Server.
+This repository contains a custom HTML template for a "Recently Added" newsletter in Tautulli. This template provides a clean, customizable way to notify users of newly added content on your Plex Media Server. This template has been tested across multiple email clients on Desktop and Mobile, working in both Dark and Light mode. 
 
 ![Newsletter Preview](img/Newsletter.png)
 
