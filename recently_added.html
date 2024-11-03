@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>Plex Newsletter</title> <!-- Change to your Plex Media Server Name -->
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        :root {
+            color-scheme: light dark;
+            supported-color-schemes: light dark;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .dark-mode { background-color: #1a1a1a !important; color: #ffffff !important; }
+            .dark-mode-text { color: #ffffff !important; }
+            .dark-mode-border { border-color: #E5A00D !important; }
+            .dark-mode-card { background-color: #2d2d2d !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; width: 100%; background-color: #f4f4f4;" class="dark-mode">
+    <% if data:
+        import plexpy
+        from plexpy.helpers import grouper, get_img_service
+        recently_added = data['recently_added']
+    %>
+    
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <tr>
+            <td style="padding: 20px 0; text-align: center;">
+                <!-- Header -->
+                <div class="d-flex justify-content-center align-items-center">
+                    <!-- Change to your Logo -->
+                    <img src="https://raw.githubusercontent.com/plexinc/pms-docker/refs/heads/master/img/plex-server.png" alt="Logo" width="100" height="100">
+                </div>
+                <h1 style="margin: 0; font-size: 36px; font-weight: 700; color: #E5A00D; text-transform: uppercase; letter-spacing: 2px;">PLEX MEDIA SERVER</h1> <!-- Change to your Plex Media Server Name -->
+                <p style="margin: 10px 0; font-size: 18px; color: #666666;" class="dark-mode-text">
+                    ${parameters['start_date']} - ${parameters['end_date']}
+                </p>
+            </td>
+        </tr>
+
+        % if recently_added.get('movie'):
+        <tr>
+            <td style="padding: 20px;">
+                <div style="border-top: 2px solid #E5A00D; margin: 20px 0;" class="dark-mode-border"></div>
+                <h2 style="margin: 0; font-size: 24px; color: #333333; text-align: center;" class="dark-mode-text">
+                    Recently Added Movies
+                </h2>
+                <p style="text-align: center; color: #E5A00D; font-size: 18px;">
+                    ${len(recently_added['movie'])} movie${('s' if len(recently_added['movie']) > 1 else '')}
+                </p>
+            </td>
+        </tr>
+        
+        % for movie_a, movie_b in grouper(recently_added['movie'], 2):
+        <tr>
+            <td>
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        % for movie in (movie_a, movie_b):
+                        % if movie:
+                        <td style="padding: 10px; width: 50%; vertical-align: top;">
+                            <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="dark-mode-card">
+                                <a href="${parameters['pms_web_url']}server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${movie['rating_key']}" style="text-decoration: none; color: inherit;">
+                                    <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333;" class="dark-mode-text">${movie['title']}</h3>
+                                    % if movie['year']:
+                                    <p style="margin: 5px 0; color: #666666;" class="dark-mode-text">${movie['year']}</p>
+                                    % endif
+                                    <p style="margin: 5px 0; font-size: 14px; color: #666666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;" class="dark-mode-text">
+                                        ${movie['summary'][:200]}${('...' if len(movie['summary']) > 200 else '')}
+                                    </p>
+                                </a>
+                            </div>
+                        </td>
+                        % endif
+                        % endfor
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        % endfor
+        % endif
+
+        % if recently_added.get('show'):
+        <tr>
+            <td style="padding: 20px;">
+                <div style="border-top: 2px solid #E5A00D; margin: 20px 0;" class="dark-mode-border"></div>
+                <h2 style="margin: 0; font-size: 24px; color: #333333; text-align: center;" class="dark-mode-text">
+                    Recently Added TV Shows
+                </h2>
+                <% total_episodes = sum(season['episode_count'] for show in recently_added['show'] for season in show['season']) %>
+                <p style="text-align: center; color: #E5A00D; font-size: 18px;">
+                    ${len(recently_added['show'])} show${('s' if len(recently_added['show']) > 1 else '')} / 
+                    ${total_episodes} episode${('s' if total_episodes > 1 else '')}
+                </p>
+            </td>
+        </tr>
+
+        % for show in recently_added['show']:
+        <tr>
+            <td style="padding: 10px;">
+                <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="dark-mode-card">
+                    <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333;" class="dark-mode-text">${show['title']}</h3>
+                    % for season in show['season']:
+                    <p style="margin: 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
+                        Season ${season['media_index']} · 
+                        % if season['episode_count'] == 1:
+                        Episode ${season['episode'][0]['media_index']} - ${season['episode'][0]['title']}
+                        % else:
+                        Episodes ${season['episode_range']}
+                        % endif
+                    </p>
+                    % endfor
+                </div>
+            </td>
+        </tr>
+        % endfor
+        % endif
+
+<!-- Original footer -->
+        <tr>
+            <td class="footer" style="font-family: 'Open Sans', Helvetica, Arial, sans-serif;font-size: 12px;display: none;vertical-align: top;clear: both;margin-top: 10px;text-align: center;width: 100%;">
+                <div class="footer-bar" style="margin-left: auto;margin-right: auto;width: 200px;border-top: 1px solid #E5A00D;margin-top: 25px;"></div>
+                <div class="content-block powered-by" style="padding-bottom: 10px;padding-top: 10px;">
+                    <!-- FOOTER MESSAGE - DO NOT REMOVE -->
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
