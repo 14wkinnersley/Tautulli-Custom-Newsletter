@@ -60,6 +60,24 @@
                 background-color: #2d2d2d !important;
             }
         }
+
+        @media screen and (max-width: 480px) {
+            .movie-card {
+                flex-direction: column !important;
+            }
+
+            .movie-poster {
+                margin-right: 0 !important;
+                margin-bottom: 15px !important;
+                align-self: center !important;
+                width: 150px !important;
+                height: 225px !important;
+            }
+
+            .movie-content {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body style="margin: 0; padding: 0; width: 100%; background-color: #f4f4f4;" class="dark-mode">
@@ -96,53 +114,59 @@
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td style="padding: 10px; vertical-align: top;">
-                            <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex;" class="dark-mode-card">
-                                <a href="${parameters['pms_web_url']}#!/server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${movie['rating_key']}"
-                                   style="flex: 0 0 100px; margin-right: 15px; background-image: url(${base_url_image + movie['thumb_hash'] if base_url_image else movie['thumb_url']});
-                                          width: 100px; height: 150px; background-position: center; background-size: cover;
-                                          background-repeat: no-repeat; border-radius: 4px; background-color: #3F4245;"
-                                   title="${movie['title']}"
-                                   target="_blank">
-                                </a>
-                                <div style="flex: 1;">
-                                    <a href="${parameters['pms_web_url']}server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${movie['rating_key']}" style="text-decoration: none; color: inherit;">
-                                        <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333;" class="dark-mode-text">${movie['title']}</h3>
+                            <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="dark-mode-card">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td style="text-align: center; padding-bottom: 15px;">
+                                            <a href="${parameters['pms_web_url']}server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${movie['rating_key']}"
+                                               style="display: inline-block; background-image: url(${base_url_image + movie['thumb_hash'] if base_url_image else movie['thumb_url']});
+                                                      width: 100px; height: 150px; background-position: center; background-size: cover;
+                                                      background-repeat: no-repeat; border-radius: 4px; background-color: #3F4245;"
+                                               title="${movie['title']}"
+                                               target="_blank">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333; text-align: center;" class="dark-mode-text">${movie['title']}</h3>
 
-                                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 5px 0;">
-                                            % if movie['year']:
-                                            <span style="color: #666666; font-size: 14px;" class="dark-mode-text">${movie['year']}</span>
+                                            <div style="text-align: center; margin: 5px 0;">
+                                                % if movie['year']:
+                                                <span style="color: #666666; font-size: 14px;" class="dark-mode-text">${movie['year']}</span>
+                                                % endif
+
+                                                % if movie['duration']:
+                                                <% duration = int(int(movie['duration'])/60000) %>
+                                                <span style="color: #666666; font-size: 14px;" class="dark-mode-text">• ${duration} mins</span>
+                                                % endif
+
+                                                % if movie['rating']:
+                                                <% rating = int(round(float(movie['rating']) / 2)) %>
+                                                <span style="color: #666666; font-size: 14px;" class="dark-mode-text">
+                                                    •
+                                                    % for _ in range(rating):
+                                                    ★
+                                                    % endfor
+                                                    % for _ in range(5-rating):
+                                                    ☆
+                                                    % endfor
+                                                </span>
+                                                % endif
+                                            </div>
+
+                                            % if movie['genres']:
+                                            <p style="margin: 5px 0; color: #666666; font-size: 14px; text-align: center;" class="dark-mode-text">
+                                                ${' • '.join(movie['genres'][:3])}
+                                            </p>
                                             % endif
 
-                                            % if movie['duration']:
-                                            <% duration = int(int(movie['duration'])/60000) %>
-                                            <span style="color: #666666; font-size: 14px;" class="dark-mode-text">• ${duration} mins</span>
-                                            % endif
-
-                                            % if movie['rating']:
-                                            <% rating = int(round(float(movie['rating']) / 2)) %>
-                                            <span style="color: #666666; font-size: 14px;" class="dark-mode-text">
-                                                •
-                                                % for _ in range(rating):
-                                                ★
-                                                % endfor
-                                                % for _ in range(5-rating):
-                                                ☆
-                                                % endfor
-                                            </span>
-                                            % endif
-                                        </div>
-
-                                        % if movie['genres']:
-                                        <p style="margin: 5px 0; color: #666666; font-size: 14px;" class="dark-mode-text">
-                                            ${' • '.join(movie['genres'][:3])}
-                                        </p>
-                                        % endif
-
-                                        <p style="margin: 10px 0 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
-                                            ${movie['summary']}
-                                        </p>
-                                    </a>
-                                </div>
+                                            <p style="margin: 10px 0 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
+                                                ${movie['summary']}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </td>
                     </tr>
@@ -170,38 +194,46 @@
         % for show in recently_added['show']:
         <tr>
             <td style="padding: 10px;">
-                <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex;" class="dark-mode-card">
-                    <a href="${parameters['pms_web_url']}#!/server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${show['rating_key']}"
-                       style="flex: 0 0 100px; margin-right: 15px; background-image: url(${base_url_image + show['thumb_hash'] if base_url_image else show['thumb_url']});
-                              width: 100px; height: 150px; background-position: center; background-size: cover;
-                              background-repeat: no-repeat; border-radius: 4px; background-color: #3F4245;"
-                       title="${show['title']}"
-                       target="_blank">
-                    </a>
-                    <div style="flex: 1;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333;" class="dark-mode-text">${show['title']}</h3>
+                <div style="background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="dark-mode-card">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td style="text-align: center; padding-bottom: 15px;">
+                                <a href="${parameters['pms_web_url']}#!/server/${parameters['pms_identifier']}/details?key=%2Flibrary%2Fmetadata%2F${show['rating_key']}"
+                                   style="display: inline-block; background-image: url(${base_url_image + show['thumb_hash'] if base_url_image else show['thumb_url']});
+                                          width: 100px; height: 150px; background-position: center; background-size: cover;
+                                          background-repeat: no-repeat; border-radius: 4px; background-color: #3F4245;"
+                                   title="${show['title']}"
+                                   target="_blank">
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #333333; text-align: center;" class="dark-mode-text">${show['title']}</h3>
 
-                        % if show['year']:
-                        <p style="margin: 5px 0; color: #666666; font-size: 14px;" class="dark-mode-text">${show['year']}</p>
-                        % endif
+                                % if show['year']:
+                                <p style="margin: 5px 0; color: #666666; font-size: 14px; text-align: center;" class="dark-mode-text">${show['year']}</p>
+                                % endif
 
-                        % for season in show['season']:
-                        <p style="margin: 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
-                            Season ${season['media_index']} ·
-                            % if season['episode_count'] == 1:
-                            Episode ${season['episode'][0]['media_index']} - ${season['episode'][0]['title']}
-                            % else:
-                            Episodes ${season['episode_range']}
-                            % endif
-                        </p>
-                        % endfor
+                                % for season in show['season']:
+                                <p style="margin: 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
+                                    Season ${season['media_index']} ·
+                                    % if season['episode_count'] == 1:
+                                    Episode ${season['episode'][0]['media_index']} - ${season['episode'][0]['title']}
+                                    % else:
+                                    Episodes ${season['episode_range']}
+                                    % endif
+                                </p>
+                                % endfor
 
-                        % if show['summary']:
-                        <p style="margin: 15px 0 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
-                            ${show['summary']}
-                        </p>
-                        % endif
-                    </div>
+                                % if show['summary']:
+                                <p style="margin: 15px 0 5px 0; font-size: 14px; color: #666666;" class="dark-mode-text">
+                                    ${show['summary']}
+                                </p>
+                                % endif
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </td>
         </tr>
